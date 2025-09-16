@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Makeup Advisor</title>
+<style>
+  body { font-family: Arial; text-align: center; margin: 50px; }
+  img { max-width: 300px; margin-top: 20px; }
+</style>
+</head>
+<body>
+<h1>Makeup Advisor</h1>
+<input type="file" id="upload" accept="image/*">
+<img id="preview" src="" alt="">
+<p id="result"></p>
+
+<script>
+const upload = document.getElementById('upload');
+const preview = document.getElementById('preview');
+const result = document.getElementById('result');
+
+upload.addEventListener('change', () => {
+    const file = upload.files[0];
+    if (!file) return;
+
+    preview.src = URL.createObjectURL(file);
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    fetch('http://localhost:5000/analyze', { // backend endpoint
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        result.innerText = data; // show makeup suggestion
+    })
+    .catch(err => {
+        result.innerText = "Error: " + err;
+    });
+});
+</script>
+</body>
+</html>
